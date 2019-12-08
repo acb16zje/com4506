@@ -1,8 +1,8 @@
 \documentclass[12pt, a4paper]{article}
 \edef\restoreparindent{\parindent=\the\parindent\relax}
+\usepackage{XCharter}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{XCharter}
 \usepackage{amsmath}
 \usepackage[UKenglish]{babel}
 \usepackage[bibstyle=ieee, dashed=false, sorting=nty]{biblatex}
@@ -13,10 +13,13 @@
 \usepackage[top=25mm, right=25mm, bottom=20mm, left=25mm]{geometry}
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
+\usepackage{listings}
+\usepackage{adjustbox, makecell}
 \usepackage{microtype}
 \usepackage{multicol}
 \usepackage{parskip}
 \usepackage{titlesec}
+\usepackage{xcolor}
 \usepackage{xparse}
 
 \restoreparindent
@@ -24,7 +27,7 @@
 \pagestyle{fancy}
 \fancyhead[L]{COM4506}
 \fancyhead[C]{Assignment: Metamorphic Testing}
-\fancyhead[R]{160203853}
+\fancyhead[R]{Zer Jun Eng}
 \setlength{\headheight}{15pt}
 
 \setcounter{secnumdepth}{4}
@@ -38,14 +41,33 @@
 
 \newcounter{category}[subsection]
 \newenvironment{category}[3][]{\refstepcounter{category}\par\medskip
-\noindent \underline{\textbf{Category~#1\thecategory \quad #2}} \rmfamily\par #3}{\bigskip}
+\noindent \underline{\textbf{Category~#1\thecategory \quad #2}} \rmfamily\par #3}{\medskip}
+
+\renewcommand{\arraystretch}{1.3}
+
+\definecolor{seagreen}{rgb}{0.18, 0.55, 0.34}
+\lstset{
+tabsize = 2, %% set tab space width
+showstringspaces = false, %% prevent space marking in strings, string is defined as the text that is generally printed directly to the console
+numbers = left, %% display line numbers on the left
+commentstyle = \color{seagreen}, %% set comment color
+keywordstyle = \color{blue}, %% set keyword color
+stringstyle = \color{red}, %% set string color
+rulecolor = \color{black}, %% set frame color to avoid being affected by text color
+basicstyle = \small \ttfamily , %% set listing font and size
+breaklines = true, %% enable line breaking
+numberstyle = \tiny,
+}
+
 
 \addbibresource{references.bib}
 
 \begin{document}
 
-\setlength{\abovedisplayskip}{0pt}
-\setlength{\abovedisplayshortskip}{0pt}
+% \setlength{\abovedisplayskip}{0pt}
+% \setlength{\abovedisplayshortskip}{0pt}
+
+
 
 \section{Category Partition Method}
 
@@ -53,6 +75,9 @@
 %	List
 %----------------------------------------------------------------------------------------
 \subsection{Parameter: List}
+\textcolor{red}{N.B.} All elements in the list must be an instance of a class that implements the
+\texttt{Comparable} interface and must be mutually comparable.
+
 \begin{category}[L]{Empty list}
   \textbf{Input:} \texttt{list = []}
   \par
@@ -62,68 +87,69 @@
 \end{category}
 
 \begin{category}[L]{Single element in the list}
-  \textbf{Input:} \texttt{list = [$x$]}, where $x$ is an element of a class that implements the
-  \texttt{Comparable} interface.
+  \textbf{Input:} \texttt{list = [$x$]}
   \par
   \textbf{Reason:} One of the edge cases of the \texttt{List} interface. The output returned by both
   \texttt{Collections.sort} and \texttt{Collections.rotate} should be the same as the input.
 \end{category}
 
 \begin{category}[L]{More than one element in the list}
-  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$, where $n$ is the number of
-  elements in the list, and $x_0, x_1, \dots, x_n$ are the elements of a class that implements the
-  \texttt{Comparable} interface.
+  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$, where $n$ is the total
+  number of elements in the list
   \par
-  \textbf{Reason:} The is the minimum viable test case for testing the actual functionality of
+  \textbf{Reason:} The is the minimum viable case for testing the actual functionality of both
   \texttt{Collections.sort} and \texttt{Collections.rotate}. This is the base form that is used to
   define other variants of the input (\textbf{Category L4 - L7}).
 \end{category}
 
-\begin{category}[L]{Duplicate elements in the list}
-  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$. The list follows the input
-  restrictions of \textbf{Category L3}. \textbf{N.B.} In addition, there also exists some $\{a, b\}
-  \in n$ where the value of $x_a$ is equal to $x_b$.
+\begin{category}[L]{Repeated elements in the list}
+  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$. In addition, there exists
+  some $a, b\ \text{for all } 0 \leq a,b \leq n$, the value of $x_a$ is equal to $x_b$.
   \par
-  \textbf{Reason:} This is to test whether the \texttt{Collections.sort} method is able to handle
-  duplicate elements. The duplicate elements should be arranged next to each other in the sorted
-  list.
+  \textbf{Reason:}
+  \begin{enumerate}
+    \item This is to test the stability of the \texttt{Collections.sort} sorting algorithm.
+  The sorting algorithm should sort the repeated elements in the same order that they appear in the
+  input.
+    \item This is to test that \texttt{Collections.rotate} only modifies the position of the
+    elements. The value of each element should not affect the final output.
+  \end{enumerate}
 \end{category}
 
-\begin{category}[L]{List is in random order}
-  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$. The list follows the input
-  restrictions of \textbf{Category L3}, but the list is could be arranged in a way where $x_k <
-  x_{k+1}$, but $x_{k+2} < x_k$ for all $k \in n$. The list can also contain duplicate elements.
+\begin{category}[L]{List is partially sorted}
+  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$, there exists some $i, j$
+  such that for all $i \geq 0,\  i < j,\  j \leq n$, and \texttt{[$x_i, \dots, x_j$].length $\neq
+  n$}, the sub-list $x_i, \dots, x_j$ is sorted.
   \par
-  \textbf{Reason:} This is to test the sorting capability of \texttt{Collections.sort}. It is
-  expected that the input will be sorted into ascending order, according to the natural ordering of
-  its elements.
+  \textbf{Reason:} A derivative of \textbf{Category L4} to test the stability of the
+  \texttt{Collections.sort} sorting algorithm. The sorting algorithm should sort the partially
+  sorted elements in the same order that they appear in the input.
 \end{category}
 
-\begin{category}[L]{List is in ascending natural order of its elements}
-  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$. The list follows the input
-  restrictions of \textbf{Category L3}, and the list can contain duplicate elements. However, the
-  list must be arranged according to the natural ordering \cite{java_natural_order} of its elements,
-  where $x_0 \leq x_1,\  x_1 \leq x_2,\  \dots,\  x_{n-1}$
+\begin{category}[L]{List is sorted in ascending natural order of its elements}
+  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$, where the list is arranged
+  according to the natural ordering \cite{java_natural_order} of its elements such that $x_k \leq
+  x_{k+1}$ for all $0 \leq k \leq n$. The list can contain repeated elements.
   \par
-  \textbf{Reason:} This is to test the sorting consistency of \texttt{Collections.sort}. Since the
-  input list is already sorted, then sorting the input list should return a list then is arranged in
-  the same order as the input list.
+  \textbf{Reason:} This is to test the sorting stability of \texttt{Collections.sort}. Since the
+  input list is already sorted, then the elements in the output list should have the same order as
+  the input list.
 \end{category}
 
-\begin{category}[L]{List is in descending natural order of its elements}
-  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$. The list follows the input
-  restrictions of \textbf{Category L3}, and the list can contain duplicate elements. However, the
-  list must be arranged according to the \textbf{reverse} natural ordering \cite{java_natural_order}
-  of its elements, where $x_0 \geq x_1,\  x_1 \geq x_2,\  \dots,\  x_{n-1} \geq x_n$.
+\begin{category}[L]{List is sorted in descending natural order of its elements}
+  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$, where the list is arranged
+  according to the \textbf{reverse} natural ordering \cite{java_natural_order} of its elements such
+  that $x_k \geq x_{k+1}$ for all $0 \leq k < n$.
   \par
-  \textbf{Reason:} This is the inverse test case of \textbf{Category L6}, where the input list is
-  sorted in reverse order. The aim is to ensure that \texttt{Collections.sort} can handle the cases
-  where certain parts of the list (i.e. sub-list) are inversely sorted.
+  \textbf{Reason:} This is the inverse case of \textbf{Category L6}, where the input list is sorted
+  in reverse order. The aim is to test the sorting stability of \texttt{Collections.sort} and also
+  ensure that it can handle the cases where certain parts of the list (i.e. sub-list) are inversely
+  sorted.
 \end{category}
 
 \begin{category}[L]{List size is greater than or equal to \texttt{ROTATE\_THRESHOLD}}
   \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n \geq \texttt{ROTATE\_THRESHOLD}$,
-  where the value of \\\texttt{ROTATE\_THRESHOLD} is defined as 100 in \texttt{Collections.java}
+  in which the value of \\\texttt{ROTATE\_THRESHOLD} is defined as 100 in \texttt{Collections.java}
   \cite{rotate_threshold_variable}.
   \par
   \textbf{Reason:} According to the source code of \texttt{Collections.java}
@@ -158,22 +184,29 @@
   distance input by covering the positive domain of \texttt{int} data type.
 \end{category}
 
-\begin{category}[D]{Smaller than list size}
-  \textbf{Input:} \texttt{distance < list.size()}
+\begin{category}[D]{Larger than list size}
+  \textbf{Input:} \texttt{distance > list.size()}
   \par
-  \textbf{Reason:} A stricter variant of \textbf{Category D1 - D3}.
+  \textbf{Reason:} A derivative of \textbf{Category D3}. Since the \texttt{rotate} method uses
+  modulo operation on the input distance \cite{collection_rotate}, this is to test whether the
+  behaviour of inputting a distance larger than \texttt{list.size()} is the same as inputting the
+  value of \texttt{distance \% list.size()} \cite{collection_rotate}.
 \end{category}
 
 \begin{category}[D]{Equal to list size}
   \textbf{Input:} \texttt{distance == list.size()}
   \par
-  \textbf{Reason:}
+  \textbf{Reason:} This is to validate that if the distance is equal to the \texttt{list.size()},
+  then \texttt{Collections.rotate} will return the the same output as the input.
 \end{category}
 
-\begin{category}[D]{Larger than list size}
-  \textbf{Input:} \texttt{distance > list.size()}
+\begin{category}[D]{Smaller than list size}
+  \textbf{Input:} \texttt{distance < list.size()}
   \par
-  \textbf{Reason:} A stricter variant of \textbf{Category D3}.
+  \textbf{Reason:} A derivative of \textbf{Category D1 - D3} and the inverse case of
+  \textbf{Category D4}. This is to validate the assumption that there exists some $d$ for all $d >
+  \texttt{list.size()}$ and $n$ for all $n < \texttt{list.size()}$ such that \texttt{rotate(list, d)
+  == rotate(list, n)}.
 \end{category}
 
 \begin{category}[D]{Equal to minimum boundary value of \texttt{int}}
@@ -198,65 +231,234 @@
 %	Collection
 %----------------------------------------------------------------------------------------
 \subsection{Parameter: Collection}
+\textcolor{red}{N.B.} All elements in the collection must be an instance of a class that implements
+the \texttt{Comparable} interface and must be mutually comparable.
+
 \begin{category}[C]{Single element in collection}
-  \textbf{Input:}
+  \textbf{Input:} $\texttt{coll} = \{x\}$
   \par
-  \textbf{Reason:}
+  \textbf{Reason:} Edge case of the \texttt{Collections.min} method. The method should only return
+  the single element as the minimum element of the given collection.
 \end{category}
 
 \begin{category}[C]{More than one element in collection}
-  \textbf{Input:}
+  \textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$
   \par
-  \textbf{Reason:}
+  \textbf{Reason:} To test whether the \texttt{Collections.min} method is able to find and return
+  the minimum element of the given collection.
 \end{category}
 
-\begin{category}[C]{Duplicate elements in collection}
-  \textbf{Input:}
+\begin{category}[C]{Repeated elements in collection}
+  \textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$. In addition, there
+  exists some $a, b\ \text{for all } 0 \leq a,b \leq n,\  a \neq b$, the value of $x_a$ is equal to
+  $x_b$.
   \par
-  \textbf{Reason:}
+  \textbf{Reason:} To test whether the \texttt{Collections.min} method is able to handle repeated
+  elements and correctly return the minimum element of the given collection.
 \end{category}
 
-\begin{category}[C]{Duplicate minimum elements in collection}
-  \textbf{Input:}
+\begin{category}[C]{Repeated minimum elements in collection}
+  \textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$. In addition, there
+  exists some $a, b\ \text{for all } 0 \leq a,b \leq n,\  a \neq b$, the value of $x_a$ is equal to
+  $x_b$ and both $x_a$ and $x_b$ are the minimum elements in the collection.
   \par
-  \textbf{Reason:}
+  \textbf{Reason:} A derivative of \textbf{Category C3} to test the stability of
+  \texttt{Collections.min} method. It is expected that the method will treat the repeated minimum
+  elements as the same element and return correctly.
 \end{category}
 
-\begin{category}[C]{Collection is in random order}
-  \textbf{Input:}
+\begin{category}[C]{Collection contains the minimum possible value of the class}
+  \textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$, and there exists a
+  $k$ where $0 \leq k \leq n$ such that $x_k$ is the minimum possible value of the element's class.
   \par
-  \textbf{Reason:}
+  \textbf{Reason:} To cover the boundary case of \texttt{Collections.min}, and to test whether the
+  method always return the minimum possible value of the class when the given collection contains
+  it.
 \end{category}
 
 \begin{category}[C]{Collection is in ascending natural order of its elements}
-  \textbf{Input:}
+  \textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$, where the
+  collection is arranged according to the natural ordering \cite{java_natural_order} of its elements
+  such that $x_k \leq x_{k+1}$ for all $0 \leq k \leq n$. The collection can contain repeated
+  elements.
   \par
-  \textbf{Reason:}
+  \textbf{Reason:} Since the given collection is already sorted, then the minimum element returned
+  should have the same value as first element of the collection.
 \end{category}
 
 \begin{category}[C]{Collection is in descending natural order of its elements}
-  \textbf{Input:}
+  \textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$, where the
+  collection is arranged according to the natural ordering \cite{java_natural_order} of its elements
+  such that $x_k \geq x_{k+1}$ for all $0 \leq k < n$. The collection can contain repeated elements.
   \par
-  \textbf{Reason:}
+  \textbf{Reason:} The inverse case of \textbf{Category C6}. Since, the given collection is sorted
+  in reverse order, then the minimum element returned should have the same value as the last element
+  of the collection.
 \end{category}
 
-
+%----------------------------------------------------------------------------------------
+%	Test cases
+%----------------------------------------------------------------------------------------
 \section{Test Cases}
-
 \subsection{\texttt{Collections.sort(List<T> list)}}
+\begin{enumerate}
+  \item \textbf{Test Case 1}
+  \par\quad\textbf{Categories:} L2
+
+  \par\quad\textbf{Input:} \texttt{list = [$x$]}, where $x$ is any arbitrary element of a class
+  that implements the \texttt{Comparable} interface.
+
+  \item \textbf{Test Case 2}
+  \par\quad\textbf{Categories:} L3 $\wedge$ L4 $\wedge$ L5
+
+  \par\quad\textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$
+  \begin{itemize}
+    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable}
+    interface.
+    \item there exists some $a, b$ such that $\text{for all } 0 \leq a,b \leq n$, the value of $x_a$
+    is equal to $x_b$.
+    \item The list is partially sorted.
+  \end{itemize}
+
+  \item \textbf{Test Case 3}
+  \par\quad\textbf{Categories:} L3 $\wedge$ L7
+  \par\quad\textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$
+  \begin{itemize}
+    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable}
+    \item the list must be arranged according to the \textbf{reverse} natural ordering
+    \cite{java_natural_order} of its elements such that $x_k \geq x_{k+1}$ for all $0 \leq k < n$.
+  \end{itemize}
+\end{enumerate}
 
 \subsection{\texttt{Collections.rotate(List<?> list, int distance)}}
+\begin{enumerate}
+  \item \textbf{Test Case 1}
+  \par\quad\textbf{Categories:} L1, D2 $\wedge$ D5
+  \par\quad\textbf{Input:} \texttt{list = [], distance = 0}
+
+  \item \textbf{Test Case 2}
+  \par\quad\textbf{Categories:} L3 $\wedge$ L4, D3 $\wedge$ D4 $\wedge$ D8
+  \par\quad\textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$] for $n > 1$, distance = $2^{31} - 1$}
+  \begin{itemize}
+    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable}
+    interface.
+    \item there exists some $a, b$ such that $\text{for all } 0 \leq a,b \leq n$, the value of $x_a$
+    is equal to $x_b$.
+  \end{itemize}
+
+  \item \textbf{Test Case 3}
+  \par\quad\textbf{Categories:} L3 $\wedge$ L8, D1 $\wedge$ D6 $\wedge$ D7
+  \par\quad\textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n \geq
+  \texttt{ROTATE\_THRESHOLD}$\texttt{, distance = $-2^{31}$}
+  \begin{itemize}
+    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable} interface.
+    \item \texttt{ROTATE\_THRESHOLD = 100} \cite{rotate_threshold_variable}
+  \end{itemize}
+\end{enumerate}
 
 \subsection{\texttt{Collections.min(Collection<? extends T> coll)}}
+\begin{enumerate}
+  \item \textbf{Test Case 1}
+  \par\quad\textbf{Categories:} C1
+  \par\quad\textbf{Input:} \texttt{coll = $\{x\}$}, where $x$ is any arbitrary element of a class
+  that implements the \texttt{Comparable} interface.
 
+  \item \textbf{Test Case 2}
+  \par\quad\textbf{Categories:} C2 $\wedge$ C3 $\wedge$ C5
+  \par\quad\textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$
+  \begin{itemize}
+    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable} interface.
+    \item there exists some $a, b$ for all $0 \leq a,b \leq n,\  a \neq b$, the value of $x_a$ is
+    equal to $x_b$.
+    \item there exists a $k$ where $0 \leq k \leq n$ such that $x_k$ is the minimum possible value
+    of the element's class.
+  \end{itemize}
+
+  \item \textbf{Test Case 3}
+  \par\quad\textbf{Categories:} C2 $\wedge$ C4 $\wedge$ C7
+  \par\quad\textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$
+  \begin{itemize}
+    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable} interface.
+    \item there exists some $a, b\ \text{for all } 0 \leq a,b \leq n,\  a \neq b$, the value of
+    $x_a$ is equal to $x_b$ and both $x_a$ and $x_b$ are the minimum elements in the collection.
+    \item the collection is arranged according to the natural ordering \cite{java_natural_order} of
+    its elements such that $x_k \geq x_{k+1}$ for all $0 \leq k < n$.
+  \end{itemize}
+\end{enumerate}
+
+%----------------------------------------------------------------------------------------
+%	Metamorphic relation
+%----------------------------------------------------------------------------------------
 \section{Metamorphic Relations}
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[width=.75\textwidth]{images/java-collection-hierarchy.png}
-%   \caption{Java Collections Framework hierarchy \cite{java_collection_hierarchy}.}
-% \end{figure}
+\subsection{Prerequisites Consideration}
+As shown in \hyperref[figure:collection_hierarchy]{\textbf{Figure
+\ref*{figure:collection_hierarchy}}}, both \texttt{Collection} and \texttt{List} are Java
+interfaces.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.75\textwidth]{images/java-collection-hierarchy.png}
+  \caption{Java Collections Framework hierarchy \cite{java_collection_hierarchy}.}
+  \label{figure:collection_hierarchy}
+\end{figure}
 
 
+\subsection{\texttt{Collections.sort(List<T> list)}}
+The return type of \texttt{Collections.sort} is \texttt{void} \cite{collection_sort}, the input list
+is modified when the method is called.
+\begin{lstlisting}[language = Java, frame = trBL, firstnumber = last, escapeinside={(*@}{@*)}]
+List x = new ArrayList<>(Arrays.asList((*@$x_0, x_1, \dots, x_n$@*)));
+List xTransformed = new ArrayList<>(x); // defined as x' below
+
+(*@$\dots$@*) // see input transformation below
+
+// x and xTransformed are modified directly after method call
+Collections.sort(x);
+Collections.sort(xTransformed);
+\end{lstlisting}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{p{3.85cm}|l|c}
+  \hline
+  \multicolumn{1}{c|}{\textbf{Description}} & \multicolumn{1}{c|}{\textbf{Input Transformation}} &
+  \textbf{Relation} \\ \hline
+  Reverse the original input list & \texttt{Collections.reverse(x')} & \texttt{x'.equals(x)} \\ \hline
+  Double the size and content of original input by adding itself & \texttt{x'.addAll(x);} &
+  \adjustbox{valign=t}{\makecell{\texttt{x'.size() == 2 * x.size, } \\ \texttt{x'[2n] == x[n], } \\
+  \texttt{x'[2n+1] == x[n]}}} \\ \hline
+  \end{tabular}
+\end{table}
+
+\subsection{\texttt{Collections.rotate(List<?> list, int distance)}}
+The return type of \texttt{Collections.rotate} is \texttt{void} \cite{collection_rotate}, the input
+list is modified when the method is called.
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l|c}
+  \hline
+  \multicolumn{1}{c|}{\textbf{Input Transformation}} & \textbf{Relation} \\ \hline
+  $xTransformed = $ &
+  \end{tabular}
+\end{table}
+
+\subsection{\texttt{Collections.min(Collection<? extends T> coll)}}
+\subsubsection*{Prerequisites}
+The return type of \texttt{Collections.min} is type of the elements in the list
+\cite{collection_min}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l|c}
+  \hline
+  \multicolumn{1}{c|}{\textbf{Input Transformation}} & \textbf{Relation} \\ \hline
+  $xTransformed = $ &
+  \end{tabular}
+\end{table}
+
+%----------------------------------------------------------------------------------------
+%	Remarks
+%----------------------------------------------------------------------------------------
 \section{Remarks}
 
 
