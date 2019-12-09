@@ -174,14 +174,14 @@ it would not be taken into consideration as one of the category partition for te
   \end{enumerate}
 \end{category}
 
-\begin{category}[L]{List is partially sorted}
+\begin{category}[L]{List contains elements of different class}
   \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$, there exists some $i, j$
-  such that for all $i \geq 0,\  i < j,\  j \leq n$, and \texttt{[$x_i, \dots, x_j$].length $\neq
-  n$}, the sub-list $x_i, \dots, x_j$ is sorted.
+  such that for all $0 \leq i,j \leq n,\  i \neq j$, the type of $x_i \neq$ type of $x_j$.
   \par
-  \textbf{Reason:} A derivative of \textbf{Category L4} to test the stability of the
-  \texttt{Collections.sort} sorting algorithm. The sorting algorithm should sort the partially
-  sorted elements in the same order that they appear in the input.
+  \textbf{Reason:} This is a special category for \texttt{Collections.rotate}. Since the purpose of
+  \texttt{Collections.rotate} is to modify the index of each element in the list, the actual value
+  of each element should have no significant effect for the method. Therefore, the \texttt{rotate}
+  method should work correspondingly when the list contains elements of different types.
 \end{category}
 
 \begin{category}[L]{List is sorted in ascending natural order of its elements}
@@ -268,21 +268,21 @@ it would not be taken into consideration as one of the category partition for te
 \end{category}
 
 \begin{category}[D]{Equal to minimum boundary value of \texttt{int}}
-  \textbf{Input:} \texttt{distance ==} $-2^{31}$
+  \textbf{Input:} \texttt{distance == Integer.MIN\_VALUE}
   \par
   \textbf{Reason:} The minimum value an \texttt{int} can have in Java is $-2^{31}$
   \cite{int_min_value}. The aim is to validate the assumption that if \texttt{Collections.rotate}
-  works for the minimum value of \texttt{int}, then it should work correctly for any value larger
-  than the minimum value.
+  works for the minimum value of \texttt{int}, then it should work correctly for any value
+  \textbf{larger than the minimum value}.
 \end{category}
 
 \begin{category}[D]{Equal to maximum boundary value of \texttt{int}}
-  \textbf{Input:} \texttt{distance ==} $2^{31} - 1$
+  \textbf{Input:} \texttt{distance == Integer.MAX\_VALUE}
   \par
   \textbf{Reason:} The maximum value an \texttt{int} can have in Java is $2^{31} - 1$
   \cite{int_max_value}. The aim is to validate the assumption that if \texttt{Collections.rotate}
-  works for the maximum value of \texttt{int}, then it should work correctly for any value smaller
-  than the maximum value.
+  works for the maximum value of \texttt{int}, then it should work correctly for any value
+  \textbf{smaller than the maximum value}.
 \end{category}
 
 %----------------------------------------------------------------------------------------
@@ -363,29 +363,16 @@ the \texttt{Comparable} interface and must be mutually comparable.
   \item \textbf{Test Case 1}
   \par\quad\textbf{Categories:} L2
 
-  \par\quad\textbf{Input:} \texttt{list = [$x$]}, where $x$ is any arbitrary element of a class
-  that implements the \texttt{Comparable} interface.
+  \par\quad\textbf{Input:} \texttt{list = [1]}
 
   \item \textbf{Test Case 2}
-  \par\quad\textbf{Categories:} L3 $\wedge$ L4 $\wedge$ L5
+  \par\quad\textbf{Categories:} L3 $\wedge$ L4
 
-  \par\quad\textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$
-  \begin{itemize}
-    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable}
-    interface.
-    \item there exists some $a, b$ such that $\text{for all } 0 \leq a,b \leq n$, the value of $x_a$
-    is equal to $x_b$.
-    \item The list is partially sorted.
-  \end{itemize}
+  \par\quad\textbf{Input:} \texttt{list = [6, 8, 2, 4, 7, 5, 3, 2, 9]}
 
   \item \textbf{Test Case 3}
   \par\quad\textbf{Categories:} L3 $\wedge$ L7
-  \par\quad\textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$
-  \begin{itemize}
-    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable}
-    \item the list must be arranged according to the \textbf{reverse} natural ordering
-    \cite{java_natural_order} of its elements such that $x_k \geq x_{k+1}$ for all $0 \leq k < n$.
-  \end{itemize}
+  \par\quad\textbf{Input:} \texttt{list = [9, 8, 7, 6, 5, 4, 3, 2, 1]}
 \end{enumerate}
 
 \subsection{\texttt{Collections.rotate(List<?> list, int distance)}}
@@ -395,53 +382,29 @@ the \texttt{Comparable} interface and must be mutually comparable.
   \par\quad\textbf{Input:} \texttt{list = [], distance = 0}
 
   \item \textbf{Test Case 2}
-  \par\quad\textbf{Categories:} L3 $\wedge$ L4, D3 $\wedge$ D4 $\wedge$ D8
-  \par\quad\textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$] for $n > 1$, distance = $2^{31} - 1$}
-  \begin{itemize}
-    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable}
-    interface.
-    \item there exists some $a, b$ such that $\text{for all } 0 \leq a,b \leq n$, the value of $x_a$
-    is equal to $x_b$.
-  \end{itemize}
+  \par\quad\textbf{Categories:} L3 $\wedge$ L5, D3 $\wedge$ D4 $\wedge$ D8
+  \par\quad\textbf{Input:} \texttt{list = [1, 2, `a', `b', 3.7, 4, "str"], distance = $2^{31} - 1$}
 
   \item \textbf{Test Case 3}
   \par\quad\textbf{Categories:} L3 $\wedge$ L8, D1 $\wedge$ D6 $\wedge$ D7
-  \par\quad\textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n \geq
-  \texttt{ROTATE\_THRESHOLD}$\texttt{, distance = $-2^{31}$}
-  \begin{itemize}
-    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable} interface.
-    \item \texttt{ROTATE\_THRESHOLD = 100} \cite{rotate_threshold_variable}
-  \end{itemize}
+  \par\quad\textbf{Input:} \texttt{list = [1, 2, $\dots$, 200, 201], distance = $2^{31} - 1$}
 \end{enumerate}
 
 \subsection{\texttt{Collections.min(Collection<? extends T> coll)}}
 \begin{enumerate}
   \item \textbf{Test Case 1}
   \par\quad\textbf{Categories:} C1
-  \par\quad\textbf{Input:} \texttt{coll = $\{x\}$}, where $x$ is any arbitrary element of a class
-  that implements the \texttt{Comparable} interface.
+  \par\quad\textbf{Input:} $\texttt{coll} = \{\texttt{1}\}$
 
   \item \textbf{Test Case 2}
-  \par\quad\textbf{Categories:} C2 $\wedge$ C3 $\wedge$ C5
-  \par\quad\textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$
-  \begin{itemize}
-    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable} interface.
-    \item there exists some $a, b$ for all $0 \leq a,b \leq n,\  a \neq b$, the value of $x_a$ is
-    equal to $x_b$.
-    \item there exists a $k$ where $0 \leq k \leq n$ such that $x_k$ is the minimum possible value
-    of the element's class.
-  \end{itemize}
+  \par\quad\textbf{Categories:} C2 $\wedge$ C7
+  \par\quad\textbf{Input:} $\texttt{coll} = \{\texttt{1, 2, 3, 4, 5, 6, 7, 8, 9}\}$
 
   \item \textbf{Test Case 3}
-  \par\quad\textbf{Categories:} C2 $\wedge$ C4 $\wedge$ C7
-  \par\quad\textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$
-  \begin{itemize}
-    \item $x$ is any arbitrary element of a class that implements the \texttt{Comparable} interface.
-    \item there exists some $a, b\ \text{for all } 0 \leq a,b \leq n,\  a \neq b$, the value of
-    $x_a$ is equal to $x_b$ and both $x_a$ and $x_b$ are the minimum elements in the collection.
-    \item the collection is arranged according to the natural ordering \cite{java_natural_order} of
-    its elements such that $x_k \geq x_{k+1}$ for all $0 \leq k < n$.
-  \end{itemize}
+  \par\quad\textbf{Categories:} C2 $\wedge$ C3 $\wedge$ C4 $\wedge$ C5
+
+  \par\quad\textbf{Input:} $\texttt{coll} = \{\texttt{6, 8, 2, 4, 7, Integer.MIN\_VALUE, 5, 3, 2,
+  9}\}$
 \end{enumerate}
 
 %----------------------------------------------------------------------------------------
@@ -480,7 +443,7 @@ Collections.sort(xTransformed);
 The return type of \texttt{Collections.rotate} is \texttt{void} \cite{collection_rotate}, the input
 list is modified when the method is called.
 
-\begin{lstlisting}[language = Java, frame = trBL, firstnumber = last, escapeinside={(*@}{@*)}]
+\begin{lstlisting}[language = Java, frame = trBL, escapeinside={(*@}{@*)}]
 List x = new ArrayList<>(Arrays.asList((*@$x_0, x_1, \dots, x_n$@*)));
 int d = ...;
 
@@ -515,7 +478,7 @@ Collections.rotate(xTransformed, dTransformed);
 The return type of \texttt{Collections.min} is type of the elements in the list
 \cite{collection_min}.
 
-\begin{lstlisting}[language = Java, frame = trBL, firstnumber = last, escapeinside={(*@}{@*)}]
+\begin{lstlisting}[language = Java, frame = trBL, escapeinside={(*@}{@*)}]
 List x = new ArrayList<>(Arrays.asList((*@$x_0, x_1, \dots, x_n$@*)));
 List xTransformed = new ArrayList<>(x); // defined as x' below
 
