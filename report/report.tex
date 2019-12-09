@@ -27,7 +27,7 @@
 \pagestyle{fancy}
 \fancyhead[L]{COM4506}
 \fancyhead[C]{Assignment: Metamorphic Testing}
-\fancyhead[R]{Zer Jun Eng}
+\fancyhead[R]{acb16zje}
 \setlength{\headheight}{15pt}
 
 \setcounter{secnumdepth}{4}
@@ -70,6 +70,64 @@ numberstyle = \tiny,
 
 
 \section{Category Partition Method}
+\subsection{Prerequisites Consideration}
+\subsubsection{Type of data structure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.7\textwidth]{images/java-collection-hierarchy.png}
+  \caption{Java Collections Framework hierarchy \cite{java_collection_hierarchy}.}
+  \label{figure:collection_hierarchy}
+\end{figure}
+
+As shown in \hyperref[figure:collection_hierarchy]{\textbf{Figure
+\ref*{figure:collection_hierarchy}}}, \texttt{Collection} is an interface that is implemented by
+three different sub-interfaces, and each sub-interface is extended by different data structure
+classes. Therefore, it is worth to investigate the relationship between the type of data structure
+used and the output of the testing implementation.
+
+\begin{enumerate}
+  \item \texttt{List:}
+  \begin{enumerate}
+    \item \texttt{ArrayList}, \texttt{LinkedList}, and \texttt{Vector} implement the \texttt{List}
+    interface. The main difference between them is their implementation which causes different
+    performance for different operations \cite{arraylist, linkedlist, vector}.
+    \item Both \texttt{Collections.sort} and \texttt{Collections.rotate} use interface over
+    concrete types for the \texttt{list} parameter. This implies that both methods will only call
+    methods that are defined by the \texttt{List} interface (so no \texttt{ArrayList} etc. specific
+    methods).
+  \end{enumerate}
+  Hence, assume that \texttt{ArrayList}, \texttt{LinkedList}, and \texttt{Vector} have correct and
+  complete implementation, the testing results of \texttt{Collections.sort} and
+  \texttt{Collections.rotate} should not be affected by the type of data structure used.
+
+  \item \texttt{Collection:}
+  \begin{enumerate}
+    \item \texttt{List}, \texttt{Queue}, and \texttt{Set} are fundamentally different from each
+    other in terms of storing and manipulating the data. One crucial difference is that \texttt{Set}
+    does not allow duplicate elements \cite{set}, which means that there will be certain categories
+    that are not applicable when the input \texttt{coll} is a \texttt{Set}.
+    \item \texttt{Collections.min} uses interface over concrete types for the \texttt{coll}
+    parameter, which implies that the \texttt{min} method will only use methods that are defined by
+    the \texttt{Collection} interface.
+  \end{enumerate}
+  Assume that \texttt{List}, \texttt{Queue}, and \texttt{Set} have been correctly and completely
+  implemented, implemented, the testing results of \texttt{min} should not be affected by the type
+  of data structure used as well.
+\end{enumerate}
+
+\subsubsection{Type of elements}
+Another aspect to consider is the type of the elements stored in the \texttt{List} or
+\texttt{Collection}. Since, all elements must be an instance of a class that implements the
+\texttt{Comparable} interface \cite{comparable}, the correctness of \texttt{Collections.sort} and
+\texttt{Collections.min} is then dependent on the implementation of the \texttt{compareTo} method.
+
+In this testing assessment, the primary objective is to test the \texttt{sort}, \texttt{rotate}, and
+\texttt{min} methods of the \texttt{Collections} interface. The premise for this assessment is that
+all classes that implemented the \texttt{Comparable} interface have defined their respective
+\texttt{compareTo} method correctly, otherwise it would have contradict with the expected output
+results set for the test cases. Hence, it is assumed that the type of elements used in the testing
+(e.g. \texttt{Integer}, \texttt{Double}, \texttt{Date} etc.) would not affect the test results, and
+it would not be taken into consideration as one of the category partition for test inputs.
 
 %----------------------------------------------------------------------------------------
 %	List
@@ -390,22 +448,10 @@ the \texttt{Comparable} interface and must be mutually comparable.
 %	Metamorphic relation
 %----------------------------------------------------------------------------------------
 \section{Metamorphic Relations}
-\subsection{Prerequisites Consideration}
-As shown in \hyperref[figure:collection_hierarchy]{\textbf{Figure
-\ref*{figure:collection_hierarchy}}}, both \texttt{Collection} and \texttt{List} are Java
-interfaces.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=.75\textwidth]{images/java-collection-hierarchy.png}
-  \caption{Java Collections Framework hierarchy \cite{java_collection_hierarchy}.}
-  \label{figure:collection_hierarchy}
-\end{figure}
-
-
 \subsection{\texttt{Collections.sort(List<T> list)}}
 The return type of \texttt{Collections.sort} is \texttt{void} \cite{collection_sort}, the input list
 is modified when the method is called.
+
 \begin{lstlisting}[language = Java, frame = trBL, firstnumber = last, escapeinside={(*@}{@*)}]
 List x = new ArrayList<>(Arrays.asList((*@$x_0, x_1, \dots, x_n$@*)));
 List xTransformed = new ArrayList<>(x); // defined as x' below
@@ -433,28 +479,70 @@ Collections.sort(xTransformed);
 \subsection{\texttt{Collections.rotate(List<?> list, int distance)}}
 The return type of \texttt{Collections.rotate} is \texttt{void} \cite{collection_rotate}, the input
 list is modified when the method is called.
+
+\begin{lstlisting}[language = Java, frame = trBL, firstnumber = last, escapeinside={(*@}{@*)}]
+List x = new ArrayList<>(Arrays.asList((*@$x_0, x_1, \dots, x_n$@*)));
+int d = ...;
+
+List xTransformed = new ArrayList<>(x); // defined as x' below
+int dTransformed = ...; // defined as d' below
+
+(*@$\dots$@*) // see input transformation below
+
+// x and xTransformed are modified directly after method call
+Collections.rotate(x, d);
+Collections.rotate(xTransformed, dTransformed);
+\end{lstlisting}
+
 \begin{table}[H]
   \centering
-  \begin{tabular}{l|c}
+  \begin{tabular}{p{3.85cm}|l|c}
   \hline
-  \multicolumn{1}{c|}{\textbf{Input Transformation}} & \textbf{Relation} \\ \hline
-  $xTransformed = $ &
+  \multicolumn{1}{c|}{\textbf{Description}} & \multicolumn{1}{c|}{\textbf{Input Transformation}} &
+  \textbf{Relation} \\ \hline
+  Reverse the original input list, convert distance to opposite sign &
+  \adjustbox{valign=t}{\makecell{\texttt{Collections.reverse(x')} \\ \texttt{dTransformed = -d}}}  &
+  \adjustbox{valign=t}{\makecell{After reversing \texttt{x'} again,\\ \texttt{x'.equals(x)}}} \\
+  \hline
+  Add the value of \texttt{d * x.size()} to distance &
+  \adjustbox{valign=t}{\makecell{\texttt{dTransformed = }\\\texttt{d * (1 + x.size())}}} &
+  \texttt{x'.equals(x)} \\
+  \hline
   \end{tabular}
 \end{table}
 
 \subsection{\texttt{Collections.min(Collection<? extends T> coll)}}
-\subsubsection*{Prerequisites}
 The return type of \texttt{Collections.min} is type of the elements in the list
 \cite{collection_min}.
 
+\begin{lstlisting}[language = Java, frame = trBL, firstnumber = last, escapeinside={(*@}{@*)}]
+List x = new ArrayList<>(Arrays.asList((*@$x_0, x_1, \dots, x_n$@*)));
+List xTransformed = new ArrayList<>(x); // defined as x' below
+
+(*@$\dots$@*) // see input transformation below
+
+// <T> is a placeholder for the type of elements in the list
+<T> z = Collections.min(x);
+<T> zTransformed = Collections.min(xTransformed);
+\end{lstlisting}
+
 \begin{table}[H]
   \centering
-  \begin{tabular}{l|c}
+  \begin{tabular}{p{8cm}|l|c}
   \hline
-  \multicolumn{1}{c|}{\textbf{Input Transformation}} & \textbf{Relation} \\ \hline
-  $xTransformed = $ &
+  \multicolumn{1}{c|}{\textbf{Description}} & \multicolumn{1}{c|}{\textbf{Input Transformation}} &
+  \textbf{Relation} \\ \hline
+  Add an element smaller than the minimum element in the original collection & \texttt{x'.add($x$)}
+  & \texttt{z' < z} \\ \hline
+  Add an element greater than the minimum element in the original collection & \texttt{x'.add($x$)} &
+  \texttt{z' == z} \\ \hline
+  \hline
   \end{tabular}
 \end{table}
+
+\textcolor{red}{N.B.} For the first relation, if the minimum element in the original collection is
+already the minimum possible elements for the class, then the new element added is equal to the
+minimum element in the original collection. The relation will then be \texttt{z' == z}.
 
 %----------------------------------------------------------------------------------------
 %	Remarks
