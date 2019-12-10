@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,7 @@ class SortTest {
     List<T> xTransformed = new ArrayList<>(list);
     Collections.reverse(xTransformed);
 
-    System.out.println("Relation 1");
+    System.out.println("\nRelation 1");
     System.out.println("-----------------------------------------");
     System.out.println("Original input list              : " + x);
     System.out.println("Transformed input list           : " + xTransformed);
@@ -129,6 +130,31 @@ class SortTest {
   @Test
   void relationOneTestCaseTwo() {
     relationOne(CASE_2);
+  }
+
+  /**
+   * Test Case 2, Relation 1, 1000 automated tests with random inputs
+   *
+   * Category combinations: L3 ∧ L4
+   * Metamorphic relation: see {@link SortTest#relationOne(List)}
+   */
+  @Test
+  void relationOneTestCaseTwoAutomated() {
+    Random rand = new Random();
+    List<Integer> randomList = new ArrayList<>();
+
+    // Minimum list size = 0, maximum list size = 100
+    final int listSize = rand.nextInt(101);
+
+    // Add random integers into the list
+    for (int i = 0; i < listSize; i++) {
+      randomList.add(rand.nextInt());
+    }
+
+    // Run the automated test 1000 times
+    for (int i = 0; i < 1000; i++) {
+      relationOne(randomList);
+    }
   }
 
   /**

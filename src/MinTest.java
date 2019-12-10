@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,6 @@ class MinTest {
 
   private final Collection<Integer> CASE_3 = new ArrayList<>(
       Arrays.asList(6, Integer.MIN_VALUE, 2, 4, 7, Integer.MIN_VALUE, 5, 3, 2, 9));
-
 
   /**
    * Metamorphic Relation 1: Collection.min(x) <= Collection.min(xTransformed)
@@ -117,8 +118,7 @@ class MinTest {
    * Test Case 1, Relation 1
    *
    * Category combinations: C1
-   * Metamorphic relation: Add an element smaller than the minimum element in the original
-   * collection
+   * Metamorphic relation: see {@link MinTest#relationOne(Collection)}
    */
   @Test
   void relationOneTestCaseOne() {
@@ -129,8 +129,7 @@ class MinTest {
    * Test Case 1, Relation 2
    *
    * Category combinations: C1
-   * Metamorphic relation: Add an element larger than the minimum element in the original
-   * collection
+   * Metamorphic relation: see {@link MinTest#relationTwo(Collection)}
    */
   @Test
   void relationTwoTestCaseOne() {
@@ -141,8 +140,7 @@ class MinTest {
    * Test Case 2, Relation 1
    *
    * Category combinations: C2 ∧ C7
-   * Metamorphic relation: Add an element smaller than the minimum element in the original
-   * collection
+   * Metamorphic relation: see {@link MinTest#relationOne(Collection)}
    */
   @Test
   void relationOneTestCaseTwo() {
@@ -153,8 +151,7 @@ class MinTest {
    * Test Case 2, Relation 2
    *
    * Category combinations: C2 ∧ C7
-   * Metamorphic relation: Add an element larger than the minimum element in the original
-   * collection
+   * Metamorphic relation: see {@link MinTest#relationTwo(Collection)}
    */
   @Test
   void relationTwoTestCaseTwo() {
@@ -162,11 +159,36 @@ class MinTest {
   }
 
   /**
+   * Test Case 2, Relation 2, 1000 automated tests with random inputs
+   *
+   * Category combinations: C2 ∧ C7 (N.B. the generated list might not comply with the categories)
+   *
+   * Metamorphic relation: see {@link MinTest#relationTwo(Collection)}
+   */
+  @Test
+  void relationTwoTestCaseTwoAutomated() {
+    Random rand = new Random();
+    List<Integer> randomList = new ArrayList<>();
+
+    // Minimum list size = 0, maximum list size = 100
+    final int listSize = rand.nextInt(101);
+
+    // Add random integers into the list
+    for (int i = 0; i < listSize; i++) {
+      randomList.add(rand.nextInt());
+    }
+
+    // Run the automated test 1000 times
+    for (int i = 0; i < 1000; i++) {
+      relationTwo(randomList);
+    }
+  }
+
+  /**
    * Test Case 3, Relation 1
    *
    * Category combinations: C2 ∧ C3 ∧ C4 ∧ C5
-   * Metamorphic relation: Add an element smaller than the minimum element in the original
-   * collection
+   * Metamorphic relation: see {@link MinTest#relationOne(Collection)}
    */
   @Test
   void relationOneTestCaseThree() {
@@ -177,8 +199,7 @@ class MinTest {
    * Test Case 3, Relation 2
    *
    * Category combinations: C2 ∧ C3 ∧ C4 ∧ C5
-   * Metamorphic relation: Add an element larger than the minimum element in the original
-   * collection
+   * Metamorphic relation: see {@link MinTest#relationTwo(Collection)}
    */
   @Test
   void relationTwoTestCaseThree() {
