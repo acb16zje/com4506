@@ -1,6 +1,6 @@
 \documentclass[12pt, a4paper]{article}
 \edef\restoreparindent{\parindent=\the\parindent\relax}
-\usepackage{XCharter}
+% \usepackage{XCharter}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
@@ -18,7 +18,6 @@
 \usepackage{microtype}
 \usepackage{multicol}
 \usepackage{parskip}
-\usepackage{titlesec}
 \usepackage{xcolor}
 \usepackage{xparse}
 
@@ -29,15 +28,6 @@
 \fancyhead[C]{Assignment: Metamorphic Testing}
 \fancyhead[R]{acb16zje}
 \setlength{\headheight}{15pt}
-
-\setcounter{secnumdepth}{4}
-
-% \titleformat{\paragraph}
-% {\normalfont\normalsize\bfseries}{Category \Alph{subsubsection}\arabic{paragraph}}{1em}{}
-% \titlespacing*{\paragraph}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
-
-% \newcounter{category}[subsubsection]
-% \newcommand{\category}[2]{\stepcounter{category} \textbf{Category #1\thecategory: #2} \par}
 
 \newcounter{category}[subsection]
 \newenvironment{category}[3][]{\refstepcounter{category}\par\medskip
@@ -59,22 +49,16 @@ breaklines = true, %% enable line breaking
 numberstyle = \tiny,
 }
 
-
 \addbibresource{references.bib}
 
 \begin{document}
-
-% \setlength{\abovedisplayskip}{0pt}
-% \setlength{\abovedisplayshortskip}{0pt}
-
-
 
 \section{Category Partition Method}
 \subsection{Prerequisites Consideration}
 \subsubsection{Type of data structure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=.7\textwidth]{images/java-collection-hierarchy.png}
+  \includegraphics[width=.75\textwidth]{images/java-collection-hierarchy.png}
   \caption{Java Collections Framework hierarchy \cite{java_collection_hierarchy}.}
   \label{figure:collection_hierarchy}
 \end{figure}
@@ -387,7 +371,7 @@ the \texttt{Comparable} interface and must be mutually comparable.
 
   \item \textbf{Test Case 3}
   \par\quad\textbf{Categories:} L3 $\wedge$ L8, D1 $\wedge$ D6 $\wedge$ D7
-  \par\quad\textbf{Input:} \texttt{list = [1, 2, $\dots$, 200, 201], distance = $2^{31} - 1$}
+  \par\quad\textbf{Input:} \texttt{list = [1, 2, $\dots$, 200, 201], distance = $-2^{31}$}
 \end{enumerate}
 
 \subsection{\texttt{Collections.min(Collection<? extends T> coll)}}
@@ -403,7 +387,7 @@ the \texttt{Comparable} interface and must be mutually comparable.
   \item \textbf{Test Case 3}
   \par\quad\textbf{Categories:} C2 $\wedge$ C3 $\wedge$ C4 $\wedge$ C5
 
-  \par\quad\textbf{Input:} $\texttt{coll} = \{\texttt{6, 8, 2, 4, 7, Integer.MIN\_VALUE, 5, 3, 2,
+  \par\quad\textbf{Input:} $\texttt{coll} = \{\texttt{6, $-2^{31}$, 2, 4, 7, $-2^{31}$, 5, 3, 2,
   9}\}$
 \end{enumerate}
 
@@ -434,8 +418,8 @@ Collections.sort(xTransformed);
   \textbf{Relation} \\ \hline
   Reverse the original input list & \texttt{Collections.reverse(x')} & \texttt{x'.equals(x)} \\ \hline
   Double the size and content of original input by adding itself & \texttt{x'.addAll(x);} &
-  \adjustbox{valign=t}{\makecell{\texttt{x'.size() == 2 * x.size, } \\ \texttt{x'[2n] == x[n], } \\
-  \texttt{x'[2n+1] == x[n]}}} \\ \hline
+  \adjustbox{valign=t}{\makecell{\texttt{x'.size() == 2 * x.size(), } \\ \texttt{x'[2n] == x[n], }
+  \\ \texttt{x'[2n+1] == x[n]}}} \\ \hline
   \end{tabular}
 \end{table}
 
@@ -459,20 +443,27 @@ Collections.rotate(xTransformed, dTransformed);
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{p{3.85cm}|l|c}
+  \begin{tabular}{p{4.2cm}|l|c}
   \hline
   \multicolumn{1}{c|}{\textbf{Description}} & \multicolumn{1}{c|}{\textbf{Input Transformation}} &
   \textbf{Relation} \\ \hline
-  Reverse the original input list, convert distance to opposite sign &
-  \adjustbox{valign=t}{\makecell{\texttt{Collections.reverse(x')} \\ \texttt{dTransformed = -d}}}  &
-  \adjustbox{valign=t}{\makecell{After reversing \texttt{x'} again,\\ \texttt{x'.equals(x)}}} \\
-  \hline
-  Add the value of \texttt{d * x.size()} to distance &
-  \adjustbox{valign=t}{\makecell{\texttt{dTransformed = }\\\texttt{d * (1 + x.size())}}} &
-  \texttt{x'.equals(x)} \\
-  \hline
+  Reverse the original input list, convert distance to opposite sign after modulo with the list size
+  & \adjustbox{valign=t}{\makecell{\texttt{Collections.reverse(x'), } \\ \texttt{dTransformed = } \\
+  \texttt{-(d \% x.size())}} }  & \adjustbox{valign=t}{\makecell{After reversing \texttt{x'}
+  again,\\ \texttt{x'.equals(x)}}} \\ \hline
+  Decrease distance to observe the index difference of each element & \texttt{dTransformed < d \%
+  x.size()} & \adjustbox{valign=t}{\makecell{Every element in \texttt{x'} is \\ \texttt{(d \%
+  x.size()) - } \\ \texttt{dTransformed} indices \\"behind" \texttt{x}}} \\ \hline
   \end{tabular}
 \end{table}
+
+\noindent\textcolor{red}{N.B.}
+\begin{enumerate}
+  \item For both relations, if the original input list is empty, then \texttt{dTransformed = 0}.
+  \item Example for second relation: \texttt{rotate([1,2,3,4,5], 3)} will yield
+  \texttt{[3,4,5,1,2]}; After input transformation, \texttt{rotate([1,2,3,4,5], 1)} will yield
+  \texttt{[5,1,2,3,4]}.
+\end{enumerate}
 
 \subsection{\texttt{Collections.min(Collection<? extends T> coll)}}
 The return type of \texttt{Collections.min} is type of the elements in the list
@@ -491,21 +482,28 @@ List xTransformed = new ArrayList<>(x); // defined as x' below
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{p{8cm}|l|c}
+  \begin{tabular}{p{7.2cm}|l|c}
   \hline
   \multicolumn{1}{c|}{\textbf{Description}} & \multicolumn{1}{c|}{\textbf{Input Transformation}} &
   \textbf{Relation} \\ \hline
-  Add an element smaller than the minimum element in the original collection & \texttt{x'.add($x$)}
+  Add an element smaller than the minimum element in the original collection & \texttt{x'.add($y$)}
   & \texttt{z' < z} \\ \hline
-  Add an element greater than the minimum element in the original collection & \texttt{x'.add($x$)} &
-  \texttt{z' == z} \\ \hline
+  Remove all minimum elements from the original collection & \texttt{x'.removeIf(z::equals)}
+  & \texttt{z' > z} \\ \hline
   \hline
   \end{tabular}
 \end{table}
 
-\textcolor{red}{N.B.} For the first relation, if the minimum element in the original collection is
-already the minimum possible elements for the class, then the new element added is equal to the
-minimum element in the original collection. The relation will then be \texttt{z' == z}.
+\newpage\noindent\textcolor{red}{N.B.}
+\begin{enumerate}
+  \item For the first relation, if the minimum element in the original collection is already the
+  minimum possible element for the class, then the new element added is equal to the minimum element
+  in the original collection. The relation will then be \texttt{z'.equals(z)}.
+  \item For the second relation, if all elements in the original collection are the minimum elements
+  (i.e. duplicate), then removing them will cause \texttt{x'} to be an empty collection. In this
+  case, \texttt{z' = z} and the relation is now \texttt{z'.equals(z)} as there are no elements
+  greater than the minimum element in the original collection.
+\end{enumerate}
 
 %----------------------------------------------------------------------------------------
 %	Remarks
