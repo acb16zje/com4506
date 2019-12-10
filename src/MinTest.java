@@ -24,14 +24,14 @@ class MinTest {
       Arrays.asList(6, Integer.MIN_VALUE, 2, 4, 7, Integer.MIN_VALUE, 5, 3, 2, 9));
 
   /**
-   * Metamorphic Relation 1: Collection.min(x) <= Collection.min(xTransformed)
+   * Metamorphic Relation 1: Collection.min(coll) <= Collection.min(collTransformed)
    *
    * Description: Add a random element smaller than the minimum element in the original collection.
    * If the minimum element in the original collection is already the minimum possible element for
    * the class, then the random element added is equal to the minimum element.
    *
    * Input transformation:
-   * 1. xTransformed.add(---a random element smaller (or equal to) than minimum of x---)
+   * 1. collTransformed.add(-a random element smaller than (or equal to) the minimum of coll-)
    *
    * Relation check after transformation:
    * 1. output >= outputTransformed
@@ -39,23 +39,21 @@ class MinTest {
    * @param coll the collection whose minimum element is to be determined
    */
   private void relationOne(Collection<Integer> coll) {
-    Collection<Integer> x = new ArrayList<>(coll);
-
     // Create output from original collection
-    Integer output = Collections.min(x);
+    Integer output = Collections.min(coll);
 
     // The collection transformation
-    Collection<Integer> xTransformed = new ArrayList<>(coll);
+    Collection<Integer> collTransformed = new ArrayList<>(coll);
     Integer randomMin = ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, output + 1);
-    xTransformed.add(randomMin);
+    collTransformed.add(randomMin);
 
     // Create output from transformed collection
-    Integer outputTransformed = Collections.min(xTransformed);
+    Integer outputTransformed = Collections.min(collTransformed);
 
     System.out.println("Relation 1");
     System.out.println("-----------------------------------------");
-    System.out.println("Original input collection    : " + x);
-    System.out.println("Transformed input collection : " + xTransformed);
+    System.out.println("Original input collection    : " + coll);
+    System.out.println("Transformed input collection : " + collTransformed);
     System.out.println("Original output              : " + output);
     System.out.println("Transformed output           : " + outputTransformed);
 
@@ -65,46 +63,45 @@ class MinTest {
 
   /**
    * Metamorphic Relation 2:
-   * 1. Collection.min(x) < Collection.min(xTransformed) if and only if {@code x} does not contain
-   * only duplicate minimum elements and {@code xTransformed} is not empty
+   * 1. Collection.min(coll) < Collection.min(collTransformed) if and only if {@code coll} does not
+   * contain only duplicate minimum elements and {@code collTransformed} is not empty
    *
-   * 2. Collection.min(x) == Collection.min(xTransformed) if and only if {@code x} contains only
-   * duplicate minimum elements and {@code xTransformed} is empty
+   * 2. Collection.min(coll) == Collection.min(collTransformed) if and only if {@code coll} contains
+   * only duplicate minimum elements and {@code collTransformed} is empty
    *
    * Description: Remove all minimum elements from the original collection
    *
    * Input transformation:
-   * 1. xTransformed.removeIf(output::equals)
+   * 1. collTransformed.removeIf(output::equals)
    *
    * Relation check after transformation:
-   * 1. If xTransformed is an empty collection, output == outputTransformed
-   * 2. If xTransformed is not an empty collection, output < outputTransformed
+   * 1. If collTransformed is an empty collection, output == outputTransformed
+   * 2. If collTransformed is not an empty collection, output < outputTransformed
    *
    * @param coll the collection whose minimum element is to be determined
    * @param <T>  the class of the objects in the collection
    */
   private <T extends Object & Comparable<? super T>> void relationTwo(
-      Collection<? extends T> coll) {
-    Collection<T> x = new ArrayList<>(coll);
-
+      Collection<? extends T> coll
+  ) {
     // Create output from original collection
-    T output = Collections.min(x);
+    T output = Collections.min(coll);
 
     // The collection transformation
-    Collection<T> xTransformed = new ArrayList<>(coll);
-    xTransformed.removeIf(output::equals);
+    Collection<T> collTransformed = new ArrayList<>(coll);
+    collTransformed.removeIf(output::equals);
 
     // Create output from transformed collection
-    T outputTransformed = xTransformed.isEmpty() ? output : Collections.min(xTransformed);
+    T outputTransformed = collTransformed.isEmpty() ? output : Collections.min(collTransformed);
 
     System.out.println("Relation 2");
     System.out.println("-----------------------------------------");
-    System.out.println("Original input collection    : " + x);
-    System.out.println("Transformed input collection : " + xTransformed);
+    System.out.println("Original input collection    : " + coll);
+    System.out.println("Transformed input collection : " + collTransformed);
     System.out.println("Original output              : " + output);
     System.out.println("Transformed output           : " + outputTransformed);
 
-    if (xTransformed.isEmpty()) {
+    if (collTransformed.isEmpty()) {
       // Relation check after transformation: 1.
       Assertions.assertEquals(output, outputTransformed);
 

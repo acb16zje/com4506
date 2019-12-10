@@ -19,7 +19,7 @@ class RotateTest {
   private final int CASE_1_DISTANCE = 0;
 
   private final List<Object> CASE_2 = new ArrayList<>(Arrays.asList(1, 2, 'a', 'b', 3.7, 4, "str"));
-  private final int CASE_2_DISTANCE = 27;
+  private final int CASE_2_DISTANCE = Integer.MAX_VALUE;
 
   private final List<Integer> CASE_3 = IntStream.rangeClosed(1, 201).boxed()
       .collect(Collectors.toList());
@@ -28,21 +28,21 @@ class RotateTest {
 
   /**
    * Metamorphic Relation 1:
-   * 1. Collections.rotate(x, d) == Collections.rotate(xTransformed, dTransformed) if and only if
-   * {@code x == xTransformed} before the rotation
+   * 1. Collections.rotate(list, distance) == Collections.rotate(listTransformed,
+   * distanceTransformed) if and only if {@code list == listTransformed} before the rotation
    *
-   * 2. Collections.rotate(x, d) == Collections.rotate(xTransformed, dTransformed) if and only if
-   * {@code xTransformed} is reversed after the rotation
+   * 2. Otherwise, Collections.rotate(list, distance) == Collections.rotate(listTransformed,
+   * distanceTransformed) if and only if {@code listTransformed} is reversed after the rotation
    *
    * Description: Reverse the original input list, convert distance to opposite sign after modulo
    * with the size of original input list
    *
    * Input transformation:
-   * 1. Collections.reverse(xTransformed);
-   * 2. dTransformed = -(distance % x.size())
+   * 1. Collections.reverse(listTransformed);
+   * 2. distanceTransformed = -(distance % list.size())
    *
    * Relation check after transformation:
-   * 1. After reversing xTransformed again, then xTransformed.equals(x)
+   * 1. After reversing listTransformed again, then listTransformed.equals(list)
    *
    * @param list     the list to be rotated
    * @param distance the distance to rotate the list. There are no
@@ -50,52 +50,52 @@ class RotateTest {
    *                 greater than {@code list.size()}.
    */
   private void relationOne(List<?> list, int distance) {
-    List<?> x = new ArrayList<>(list);
-
     // The list transformation
-    List<?> xTransformed = new ArrayList<>(x);
-    Collections.reverse(xTransformed);
+    List<?> listTransformed = new ArrayList<>(list);
+    Collections.reverse(listTransformed);
 
     // The distance transformation
-    int dTransformed = x.size() == 0 ? 0 : -(distance % x.size());
+    int distanceTransformed = list.size() == 0 ? 0 : -(distance % list.size());
 
     System.out.println("Relation 1");
     System.out.println("-----------------------------------------");
-    System.out.println("Original input list                : " + x);
-    System.out.println("Transformed input list             : " + xTransformed);
+    System.out.println("Original input list                : " + list);
+    System.out.println("Transformed input list             : " + listTransformed);
 
     // Rotate both original and transformed list
-    Collections.rotate(x, distance);
-    Collections.rotate(xTransformed, dTransformed);
+    Collections.rotate(list, distance);
+    Collections.rotate(listTransformed, distanceTransformed);
 
-    System.out.println("Original input list after rotate   : " + x);
-    System.out.println("Transformed input list after rotate: " + xTransformed);
+    System.out.println("Original input list after rotate   : " + list);
+    System.out.println("Transformed input list after rotate: " + listTransformed);
 
-    // Reverse xTransformed again
-    Collections.reverse(xTransformed);
+    // Reverse listTransformed again
+    Collections.reverse(listTransformed);
 
-    System.out.println("Reverse transformed input again    : " + xTransformed);
+    System.out.println("Reverse transformed input again    : " + listTransformed);
 
     // Relation check after transformation: 1.
-    Assertions.assertEquals(x, xTransformed);
+    Assertions.assertEquals(list, listTransformed);
   }
 
   /**
    * Metamorphic Relation 2:
-   * 1. Collections.rotate(x, d) == Collections.rotate(xTransformed, dTransformed) if and only if
-   * {@code x == xTransformed} before the rotation
+   * 1. Collections.rotate(list, distance) == Collections.rotate(listTransformed,
+   * distanceTransformed) if and only if {@code list == listTransformed} before the rotation
    *
-   * 2. Collections.rotate(x, d) != Collections.rotate(xTransformed, dTransformed), but after
-   * rotating, every element in {@code xTransformed} is "behind" {@code x}
+   * 2. Collections.rotate(list, distance != Collections.rotate(listTransformed,
+   * distanceTransformed), but after rotating, every element in {@code listTransformed} is "behind"
+   * {@code list}
    *
    * Description: Decrease distance to observe the index difference of each element
    *
    * Input transformation:
-   * 1. Collections.reverse(xTransformed);
-   * 2. dTransformed < (distance % x.size())
+   * 1. Collections.reverse(listTransformed);
+   * 2. distanceTransformed < (distance % list.size())
    *
    * Relation check after transformation:
-   * 1. Every element in xTransformed is (distance % x.size()) - dTransformed indices "behind" x
+   * 1. Every element in listTransformed is (distance % list.size()) - distanceTransformed indices
+   * "behind" list
    *
    * @param list     the list to be rotated
    * @param distance the distance to rotate the list. There are no
@@ -103,33 +103,32 @@ class RotateTest {
    *                 greater than {@code list.size()}.
    */
   private void relationTwo(List<?> list, int distance) {
-    List<?> x = new ArrayList<>(list);
-
     // The list transformation
-    List<?> xTransformed = new ArrayList<>(x);
+    List<?> listTransformed = new ArrayList<>(list);
 
     // The distance transformation - transform distance to any number that is < original distance
     Random rand = new Random();
-    int dTransformed = x.size() == 0 ? 0 : rand.nextInt(Math.floorMod(distance, x.size()));
+    int dTransformed = list.size() == 0 ? 0 : rand.nextInt(Math.floorMod(distance, list.size()));
 
-    int deltaDistance = x.size() == 0 ? 0 : (distance % x.size()) - dTransformed;
+    int deltaDistance = list.size() == 0 ? 0 : (distance % list.size()) - dTransformed;
 
     System.out.println("Relation 2");
     System.out.println("-----------------------------------------");
-    System.out.println("Original input list                : " + x);
-    System.out.println("Transformed input list             : " + xTransformed);
+    System.out.println("Original input list                : " + list);
+    System.out.println("Transformed input list             : " + listTransformed);
     System.out.println("Delta distance                     : " + deltaDistance);
 
     // Rotate both original and transformed list
-    Collections.rotate(x, distance);
-    Collections.rotate(xTransformed, dTransformed);
+    Collections.rotate(list, distance);
+    Collections.rotate(listTransformed, dTransformed);
 
-    System.out.println("Original input list after rotate   : " + x);
-    System.out.println("Transformed input list after rotate: " + xTransformed);
+    System.out.println("Original input list after rotate   : " + list);
+    System.out.println("Transformed input list after rotate: " + listTransformed);
 
     // Relation check after transformation: 1.
-    for (int i = 0, n = x.size(); i < n; i++) {
-      Assertions.assertEquals(x.get(i), xTransformed.get(Math.floorMod(i - deltaDistance, n)));
+    for (int i = 0, n = list.size(); i < n; i++) {
+      Assertions
+          .assertEquals(list.get(i), listTransformed.get(Math.floorMod(i - deltaDistance, n)));
     }
   }
 

@@ -14,7 +14,6 @@
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{listings}
-\usepackage{adjustbox, makecell}
 \usepackage{microtype}
 \usepackage{multicol}
 \usepackage{parskip}
@@ -32,22 +31,6 @@
 \newcounter{category}[subsection]
 \newenvironment{category}[3][]{\refstepcounter{category}\par\medskip
 \noindent \underline{\textbf{Category~#1\thecategory \quad #2}} \rmfamily\par #3}{\medskip}
-
-\renewcommand{\arraystretch}{1.3}
-
-\definecolor{seagreen}{rgb}{0.18, 0.55, 0.34}
-\lstset{
-tabsize = 2, %% set tab space width
-showstringspaces = false, %% prevent space marking in strings, string is defined as the text that is generally printed directly to the console
-numbers = left, %% display line numbers on the left
-commentstyle = \color{seagreen}, %% set comment color
-keywordstyle = \color{blue}, %% set keyword color
-stringstyle = \color{red}, %% set string color
-rulecolor = \color{black}, %% set frame color to avoid being affected by text color
-basicstyle = \small \ttfamily , %% set listing font and size
-breaklines = true, %% enable line breaking
-numberstyle = \tiny,
-}
 
 \addbibresource{references.bib}
 
@@ -80,8 +63,8 @@ used and the output of the testing implementation.
     methods that are defined by the \texttt{List} interface (so no \texttt{ArrayList} etc. specific
     methods).
   \end{enumerate}
-  Hence, assume that \texttt{ArrayList}, \texttt{LinkedList}, and \texttt{Vector} have correct and
-  complete implementation, the testing results of \texttt{Collections.sort} and
+  Hence, assume that \texttt{ArrayList}, \texttt{LinkedList}, and \texttt{Vector} have been
+  correctly implemented, the testing results of \texttt{Collections.sort} and
   \texttt{Collections.rotate} should not be affected by the type of data structure used.
 
   \item \texttt{Collection:}
@@ -94,9 +77,8 @@ used and the output of the testing implementation.
     parameter, which implies that the \texttt{min} method will only use methods that are defined by
     the \texttt{Collection} interface.
   \end{enumerate}
-  Assume that \texttt{List}, \texttt{Queue}, and \texttt{Set} have been correctly and completely
-  implemented, implemented, the testing results of \texttt{min} should not be affected by the type
-  of data structure used as well.
+  Assume that \texttt{List}, \texttt{Queue}, and \texttt{Set} have been correctly implemented, the
+  testing results of \texttt{min} should not be affected by the type of data structure used as well.
 \end{enumerate}
 
 \subsubsection{Type of elements}
@@ -170,7 +152,7 @@ it would not be taken into consideration as one of the category partition for te
 
 \begin{category}[L]{List is sorted in ascending natural order of its elements}
   \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$, where the list is arranged
-  according to the natural ordering \cite{java_natural_order} of its elements such that $x_k \leq
+  according to the natural ordering \cite{comparable} of its elements such that $x_k \leq
   x_{k+1}$ for all $0 \leq k \leq n$. The list can contain repeated elements.
   \par
   \textbf{Reason:} This is to test the sorting stability of \texttt{Collections.sort}. Since the
@@ -180,7 +162,7 @@ it would not be taken into consideration as one of the category partition for te
 
 \begin{category}[L]{List is sorted in descending natural order of its elements}
   \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 1$, where the list is arranged
-  according to the \textbf{reverse} natural ordering \cite{java_natural_order} of its elements such
+  according to the \textbf{reverse} natural ordering \cite{comparable} of its elements such
   that $x_k \geq x_{k+1}$ for all $0 \leq k < n$.
   \par
   \textbf{Reason:} This is the inverse case of \textbf{Category L6}, where the input list is sorted
@@ -189,15 +171,14 @@ it would not be taken into consideration as one of the category partition for te
   sorted.
 \end{category}
 
-\begin{category}[L]{List size is greater than or equal to \texttt{ROTATE\_THRESHOLD}}
-  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n \geq \texttt{ROTATE\_THRESHOLD}$,
-  in which the value of \\\texttt{ROTATE\_THRESHOLD} is defined as 100 in \texttt{Collections.java}
-  \cite{rotate_threshold_variable}.
+\begin{category}[L]{List size is large}
+  \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 200$
   \par
-  \textbf{Reason:} According to the source code of \texttt{Collections.java}
-  \cite{rotate_threshold_branch}, Java uses two different algorithm to rotate lists that are < or
-  $\geq$ than \texttt{ROTATE\_THRESHOLD} respectively. The aim is to validate that both algorithms
-  are able to correctly rotate the input list.
+  \textbf{Reason:} According to the documentation of \texttt{Collections.rotate}
+  \cite{collection_rotate}, the method uses two different algorithms depending on the list size
+  (another condition is related to \texttt{RandomAccess} interface, which is not considered). The
+  aim is to validate that both algorithms are able to correctly rotate the input list by the
+  specified distance.
 \end{category}
 
 %----------------------------------------------------------------------------------------
@@ -320,7 +301,7 @@ the \texttt{Comparable} interface and must be mutually comparable.
 
 \begin{category}[C]{Collection is in ascending natural order of its elements}
   \textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$, where the
-  collection is arranged according to the natural ordering \cite{java_natural_order} of its elements
+  collection is arranged according to the natural ordering \cite{comparable} of its elements
   such that $x_k \leq x_{k+1}$ for all $0 \leq k \leq n$. The collection can contain repeated
   elements.
   \par
@@ -330,7 +311,7 @@ the \texttt{Comparable} interface and must be mutually comparable.
 
 \begin{category}[C]{Collection is in descending natural order of its elements}
   \textbf{Input:} $\texttt{coll} = \{x_0, x_1, \dots, x_n\}\ \text{for}\ n > 1$, where the
-  collection is arranged according to the natural ordering \cite{java_natural_order} of its elements
+  collection is arranged according to the natural ordering \cite{comparable} of its elements
   such that $x_k \geq x_{k+1}$ for all $0 \leq k < n$. The collection can contain repeated elements.
   \par
   \textbf{Reason:} The inverse case of \textbf{Category C6}. Since, the given collection is sorted
@@ -396,120 +377,99 @@ the \texttt{Comparable} interface and must be mutually comparable.
 %----------------------------------------------------------------------------------------
 \section{Metamorphic Relations}
 \subsection{\texttt{Collections.sort(List<T> list)}}
-The return type of \texttt{Collections.sort} is \texttt{void} \cite{collection_sort}, the input list
-is modified when the method is called.
+\begin{enumerate}
+  \item Reverse the original input list
+  \par\quad\textbf{Input transformation:} \texttt{Collections.reverse(listTransformed)}
+  \par\quad\textbf{Relation after transformation:} \texttt{listTransformed == list}
 
-\begin{lstlisting}[language = Java, frame = trBL, firstnumber = last, escapeinside={(*@}{@*)}]
-List x = new ArrayList<>(Arrays.asList((*@$x_0, x_1, \dots, x_n$@*)));
-List xTransformed = new ArrayList<>(x); // defined as x' below
-
-(*@$\dots$@*) // see input transformation below
-
-// x and xTransformed are modified directly after method call
-Collections.sort(x);
-Collections.sort(xTransformed);
-\end{lstlisting}
-
-\begin{table}[H]
-  \centering
-  \begin{tabular}{p{3.85cm}|l|c}
-  \hline
-  \multicolumn{1}{c|}{\textbf{Description}} & \multicolumn{1}{c|}{\textbf{Input Transformation}} &
-  \textbf{Relation} \\ \hline
-  Reverse the original input list & \texttt{Collections.reverse(x')} & \texttt{x'.equals(x)} \\ \hline
-  Double the size and content of original input by adding itself & \texttt{x'.addAll(x);} &
-  \adjustbox{valign=t}{\makecell{\texttt{x'.size() == 2 * x.size(), } \\ \texttt{x'[2n] == x[n], }
-  \\ \texttt{x'[2n+1] == x[n]}}} \\ \hline
-  \end{tabular}
-\end{table}
+  \item Double the size and content of original input list by adding itself
+  \par\quad\textbf{Input transformation:} \texttt{listTransformed.reverse(listTransformed)}
+  \par\quad\textbf{Relation after transformation:}
+  \begin{enumerate}
+    \item \texttt{listTransformed.size() == 2 * list.size()}
+    \item \texttt{listTransformed[2n] == list[n]}
+    \item \texttt{listTransformed[2n + 1] == list[n]}
+  \end{enumerate}
+\end{enumerate}
 
 \subsection{\texttt{Collections.rotate(List<?> list, int distance)}}
-The return type of \texttt{Collections.rotate} is \texttt{void} \cite{collection_rotate}, the input
-list is modified when the method is called.
+\begin{enumerate}
+  \item Reverse the original input list, and convert the distance to opposite sign after modulo with
+  the list size
+  \par\quad\textbf{Input transformation:}
+  \begin{enumerate}
+    \item \texttt{Collections.reverse(listTransformed)}
+    \item \texttt{distanceTransformed = -(distance \% list.size())}
+  \end{enumerate}
+  \par\quad\textbf{Relation after transformation:} \texttt{listTransformed} is the reverse of \texttt{list}.
+  After reversing \texttt{listTransformed} again, \texttt{listTransformed == list}
 
-\begin{lstlisting}[language = Java, frame = trBL, escapeinside={(*@}{@*)}]
-List x = new ArrayList<>(Arrays.asList((*@$x_0, x_1, \dots, x_n$@*)));
-int d = ...;
-
-List xTransformed = new ArrayList<>(x); // defined as x' below
-int dTransformed = ...; // defined as d' below
-
-(*@$\dots$@*) // see input transformation below
-
-// x and xTransformed are modified directly after method call
-Collections.rotate(x, d);
-Collections.rotate(xTransformed, dTransformed);
-\end{lstlisting}
-
-\begin{table}[H]
-  \centering
-  \begin{tabular}{p{4.2cm}|l|c}
-  \hline
-  \multicolumn{1}{c|}{\textbf{Description}} & \multicolumn{1}{c|}{\textbf{Input Transformation}} &
-  \textbf{Relation} \\ \hline
-  Reverse the original input list, convert distance to opposite sign after modulo with the list size
-  & \adjustbox{valign=t}{\makecell{\texttt{Collections.reverse(x'), } \\ \texttt{dTransformed = } \\
-  \texttt{-(d \% x.size())}} }  & \adjustbox{valign=t}{\makecell{After reversing \texttt{x'}
-  again,\\ \texttt{x'.equals(x)}}} \\ \hline
-  Decrease distance to observe the index difference of each element & \texttt{dTransformed < d \%
-  x.size()} & \adjustbox{valign=t}{\makecell{Every element in \texttt{x'} is \\ \texttt{(d \%
-  x.size()) - } \\ \texttt{dTransformed} indices \\"behind" \texttt{x}}} \\ \hline
-  \end{tabular}
-\end{table}
+  \item Decrease distance to observe the index different of each element
+  \par\quad\textbf{Input transformation:} \texttt{distanceTransformed < distance \% list.size()}
+  \par\quad\textbf{Relation after transformation:} Every element in \texttt{listTransformed} is $\Delta\,d$
+  indices "behind" \texttt{list}, where $\Delta\,d$ is the difference between
+  \texttt{distanceTransformed} and \texttt{distance \% list.size()}
+\end{enumerate}
 
 \noindent\textcolor{red}{N.B.}
 \begin{enumerate}
-  \item For both relations, if the original input list is empty, then \texttt{dTransformed = 0}.
+  \item For both relations, if the original list is empty, then \texttt{distanceTransformed = 0}.
   \item Example for second relation: \texttt{rotate([1,2,3,4,5], 3)} will yield
   \texttt{[3,4,5,1,2]}; After input transformation, \texttt{rotate([1,2,3,4,5], 1)} will yield
   \texttt{[5,1,2,3,4]}.
 \end{enumerate}
 
 \subsection{\texttt{Collections.min(Collection<? extends T> coll)}}
-The return type of \texttt{Collections.min} is type of the elements in the list
-\cite{collection_min}.
+\begin{enumerate}
+  \item Add an element smaller than the minimum element in the original collection
+  \par\quad\textbf{Input transformation:} \texttt{collTransformed.add($y$)}, where $y$ is a random
+  generated element
+  \par\quad\textbf{Relation after transformation:} \texttt{outputTransformed < output}
 
-\begin{lstlisting}[language = Java, frame = trBL, escapeinside={(*@}{@*)}]
-List x = new ArrayList<>(Arrays.asList((*@$x_0, x_1, \dots, x_n$@*)));
-List xTransformed = new ArrayList<>(x); // defined as x' below
+  \item Remove all minimum elements from the original collection
+  \par\quad\textbf{Input transformation:} \texttt{collTransformed.removeIf(output::equals)}
+  \par\quad\textbf{Relation after transformation:} \texttt{outputTransformed > output}
+\end{enumerate}
 
-(*@$\dots$@*) // see input transformation below
-
-// <T> is a placeholder for the type of elements in the list
-<T> z = Collections.min(x);
-<T> zTransformed = Collections.min(xTransformed);
-\end{lstlisting}
-
-\begin{table}[H]
-  \centering
-  \begin{tabular}{p{7.2cm}|l|c}
-  \hline
-  \multicolumn{1}{c|}{\textbf{Description}} & \multicolumn{1}{c|}{\textbf{Input Transformation}} &
-  \textbf{Relation} \\ \hline
-  Add an element smaller than the minimum element in the original collection & \texttt{x'.add($y$)}
-  & \texttt{z' < z} \\ \hline
-  Remove all minimum elements from the original collection & \texttt{x'.removeIf(z::equals)}
-  & \texttt{z' > z} \\ \hline
-  \hline
-  \end{tabular}
-\end{table}
-
-\newpage\noindent\textcolor{red}{N.B.}
+\noindent\textcolor{red}{N.B.}
 \begin{enumerate}
   \item For the first relation, if the minimum element in the original collection is already the
   minimum possible element for the class, then the new element added is equal to the minimum element
-  in the original collection. The relation will then be \texttt{z'.equals(z)}.
+  in the original collection. The relation will then be \texttt{outputTransformed == output}.
   \item For the second relation, if all elements in the original collection are the minimum elements
-  (i.e. duplicate), then removing them will cause \texttt{x'} to be an empty collection. In this
-  case, \texttt{z' = z} and the relation is now \texttt{z'.equals(z)} as there are no elements
-  greater than the minimum element in the original collection.
+  (i.e. duplicate), then removing them will cause \texttt{collTransformed} to be an empty
+  collection. In this case, the relation is \texttt{outputTransformed == output} as there are no
+  elements greater than the minimum element in the original collection.
 \end{enumerate}
 
 %----------------------------------------------------------------------------------------
 %	Remarks
 %----------------------------------------------------------------------------------------
 \section{Remarks}
+\subsection{Outcome of the Tests}
+All three methods have managed to pass all their respective test cases, and all transformed outputs
+are proved to obey their respective metamorphic relation. As a result, it is suggested that all
+three methods are correct and complete.
 
+\begin{enumerate}
+  \item \texttt{Collections.sort}: The method is able to rearrange the original list into ascending
+  order, according to the natural ordering of its elements for all test cases. For all transformed
+  inputs, the method is able to satisfy the expected relations.
+
+  \item \texttt{Collections.rotate}: The two metamorphic relations have shown that this method
+  alters the index but not the value of each element in the list. After the rotation, all elements
+  in the list are preserved, but each of them is moved by the specified distance.
+
+  \item \texttt{Collections.min}: This method is assumed to be the least possible one to generate
+  errors as it only performs read operation to find the minimum element \cite{collection_min}. After
+  applying the metamorphic relations to alter the minimum element in the list, the method is still
+  able to find and return the next minimum element in the list.
+\end{enumerate}
+
+\subsection{Likelihood of Faults}
+After searching the CVE archive for Oracle JDK \cite{jdk_cve} and Oracle JRE \cite{jre_cve}, no
+vulnerabilities that are related to these three methods have been found. Hence, it is suggested that
+all three methods are well implemented by the developers and have a low likelihood of failure.
 
 \printbibliography
 

@@ -18,84 +18,80 @@ class SortTest {
   private final List<Integer> CASE_3 = new ArrayList<>(Arrays.asList(9, 8, 7, 6, 5, 4, 3, 2, 1));
 
   /**
-   * Metamorphic Relation 1: Collections.sort(x) == Collections.sort(xTransformed)
+   * Metamorphic Relation 1: Collections.sort(list) == Collections.sort(listTransformed)
    *
    * Description: Reverse the original input list
    *
    * Input transformation:
-   * 1. Collections.reverse(xTransformed)
+   * 1. Collections.reverse(listTransformed)
    *
    * Relation check after transformation:
-   * 1. xTransformed.equals(x)
+   * 1. listTransformed.equals(list)
    *
    * @param list the list to be sorted
    * @param <T>  the class of the objects in the list
    */
   private <T extends Comparable<? super T>> void relationOne(List<T> list) {
-    List<T> x = new ArrayList<>(list);
-
     // The list transformation
-    List<T> xTransformed = new ArrayList<>(list);
-    Collections.reverse(xTransformed);
+    List<T> listTransformed = new ArrayList<>(list);
+    Collections.reverse(listTransformed);
 
     System.out.println("\nRelation 1");
     System.out.println("-----------------------------------------");
-    System.out.println("Original input list              : " + x);
-    System.out.println("Transformed input list           : " + xTransformed);
+    System.out.println("Original input list              : " + list);
+    System.out.println("Transformed input list           : " + listTransformed);
 
     // Sort both original and transformed lists
-    Collections.sort(x);
-    Collections.sort(xTransformed);
+    Collections.sort(list);
+    Collections.sort(listTransformed);
 
-    System.out.println("Original input list after sort   : " + x);
-    System.out.println("Transformed input list after sort: " + xTransformed);
+    System.out.println("Original input list after sort   : " + list);
+    System.out.println("Transformed input list after sort: " + listTransformed);
 
     // Relation check after transformation: 1.
-    Assertions.assertEquals(x, xTransformed);
+    Assertions.assertEquals(list, listTransformed);
   }
 
   /**
-   * Metamorphic Relation 2: Collections.sort(x) ⊂ Collections.sort(xTransformed)
+   * Metamorphic Relation 2: Collections.sort(list) ⊂ Collections.sort(listTransformed)
    *
    * Description: Double the size and content of original input by adding itself
    *
    * Input transformation:
-   * 1. xTransformed.addAll(x)
+   * 1. listTransformed.addAll(list)
    *
    * Relation check after transformation:
-   * 1. xTransformed.size == 2 * x.size()
-   * 2. xTransformed.get(2 * i) == x.get(i)
-   * 3. xTransformed.get(2 * i + 1) == x.get(i)
+   * 1. listTransformed.size == 2 * list.size()
+   * 2. listTransformed.get(2 * i) == list.get(i)
+   * 3. listTransformed.get(2 * i + 1) == list.get(i)
    *
    * @param list the list to be sorted
    * @param <T>  the class of the objects in the list
    */
   private <T extends Comparable<? super T>> void relationTwo(List<T> list) {
-    List<T> x = new ArrayList<>(list);
-
     // The list transformation
-    List<T> xTransformed = new ArrayList<>(list);
-    xTransformed.addAll(x);
+    List<T> listTransformed = new ArrayList<>(list);
+    listTransformed.addAll(list);
 
     System.out.println("Relation 2");
     System.out.println("-----------------------------------------");
-    System.out.println("Original input list              : " + x);
-    System.out.println("Transformed input list           : " + xTransformed);
+    System.out.println("Original input list              : " + list);
+    System.out.println("Transformed input list           : " + listTransformed);
 
     // Sort both original and transformed lists
-    Collections.sort(x);
-    Collections.sort(xTransformed);
+    Collections.sort(list);
+    Collections.sort(listTransformed);
 
-    System.out.println("Original input list after sort   : " + x);
-    System.out.println("Transformed input list after sort: " + xTransformed);
+    System.out.println("Original input list after sort   : " + list);
+    System.out.println("Transformed input list after sort: " + listTransformed);
 
     // Relation check after transformation: 1.
-    Assertions.assertEquals(2 * x.size(), xTransformed.size());
+    Assertions.assertEquals(2 * list.size(), listTransformed.size());
 
     // Relation check after transformation: 2. and 3.
-    for (int i = 0, n = x.size(); i < n; i++) {
-      Assertions.assertEquals(x.get(i), xTransformed.get(2 * i));
-      Assertions.assertEquals(x.get(i), xTransformed.get(2 * i + 1));
+    for (int i = 0, n = list.size(); i < n; i++) {
+      Assertions.assertEquals(list.get(i), listTransformed.get(2 * i));
+      Assertions.assertEquals(list.get(i), listTransformed.get(2 * i + 1));
     }
   }
 
