@@ -1,7 +1,5 @@
 \documentclass[12pt, a4paper]{article}
 \edef\restoreparindent{\parindent=\the\parindent\relax}
-% \usepackage{XCharter}
-\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
 \usepackage[UKenglish]{babel}
@@ -18,7 +16,6 @@
 \usepackage{multicol}
 \usepackage{parskip}
 \usepackage{xcolor}
-\usepackage{xparse}
 
 \restoreparindent
 
@@ -87,13 +84,16 @@ Another aspect to consider is the type of the elements stored in the \texttt{Lis
 \texttt{Comparable} interface \cite{comparable}, the correctness of \texttt{Collections.sort} and
 \texttt{Collections.min} is then dependent on the implementation of the \texttt{compareTo} method.
 
-In this testing assessment, the primary objective is to test the \texttt{sort}, \texttt{rotate}, and
-\texttt{min} methods of the \texttt{Collections} interface. The premise for this assessment is that
-all classes that implemented the \texttt{Comparable} interface have defined their respective
-\texttt{compareTo} method correctly, otherwise it would have contradict with the expected output
-results set for the test cases. Hence, it is assumed that the type of elements used in the testing
-(e.g. \texttt{Integer}, \texttt{Double}, \texttt{Date} etc.) would not affect the test results, and
-it would not be taken into consideration as one of the category partition for test inputs.
+The \textbf{premise} for this assessment is that all classes that implemented the
+\texttt{Comparable} interface have defined their respective \texttt{compareTo} method correctly,
+otherwise it would have \textbf{contradict} with the assumption for the output result of each test
+case. Hence, it is assumed that the type of elements used in the testing (e.g. \texttt{Integer},
+\texttt{Double}, \texttt{Date} etc.) would not affect the test results, thus it would not be taken
+into consideration as one of the category partition for test inputs.
+
+Based on this statement, the category partitions and metamorphic relations will be more focused on
+investigating and modifying the \textbf{structure} rather than the \textbf{content} of the
+\texttt{List} or \texttt{Collection}.
 
 %----------------------------------------------------------------------------------------
 %	List
@@ -171,7 +171,7 @@ it would not be taken into consideration as one of the category partition for te
   sorted.
 \end{category}
 
-\begin{category}[L]{List size is large}
+\begin{category}[L]{List size is large} \label{category:l8}
   \textbf{Input:} \texttt{list = [$x_0, x_1, \dots, x_n$]} for $n > 200$
   \par
   \textbf{Reason:} According to the documentation of \texttt{Collections.rotate}
@@ -327,17 +327,21 @@ the \texttt{Comparable} interface and must be mutually comparable.
 \begin{enumerate}
   \item \textbf{Test Case 1}
   \par\quad\textbf{Categories:} L2
-
   \par\quad\textbf{Input:} \texttt{list = [1]}
+  \par\quad\textbf{Reason:} For testing the edge case
 
   \item \textbf{Test Case 2}
   \par\quad\textbf{Categories:} L3 $\wedge$ L4
-
   \par\quad\textbf{Input:} \texttt{list = [6, 8, 2, 4, 7, 5, 3, 2, 9]}
+  \par\quad\textbf{Reason:} To test the stability of the method. After the list is sorted, the
+  relative order of the \texttt{Integer} \texttt{2} will not be changed (i.e. the one came before
+  the other in the input will also come before the other in the output.)
 
   \item \textbf{Test Case 3}
   \par\quad\textbf{Categories:} L3 $\wedge$ L7
   \par\quad\textbf{Input:} \texttt{list = [9, 8, 7, 6, 5, 4, 3, 2, 1]}
+  \par\quad\textbf{Reason:} To test the sorting capability when there are no partially sorted
+  elements in the list
 \end{enumerate}
 
 \subsection{\texttt{Collections.rotate(List<?> list, int distance)}}
@@ -345,14 +349,28 @@ the \texttt{Comparable} interface and must be mutually comparable.
   \item \textbf{Test Case 1}
   \par\quad\textbf{Categories:} L1, D2 $\wedge$ D5
   \par\quad\textbf{Input:} \texttt{list = [], distance = 0}
+  \par\quad\textbf{Reason:} For testing the edge case
 
   \item \textbf{Test Case 2}
   \par\quad\textbf{Categories:} L3 $\wedge$ L5, D3 $\wedge$ D4 $\wedge$ D8
   \par\quad\textbf{Input:} \texttt{list = [1, 2, `a', `b', 3.7, 4, "str"], distance = $2^{31} - 1$}
+  \par\quad\textbf{Reason:}
+  \begin{enumerate}
+    \item To validate and test the assumption that this method is not dependent on
+    the value of each element in the list.
+    \item To test the edge case where the distance is the maximum possible value of \texttt{int}
+    data type
+  \end{enumerate}
 
   \item \textbf{Test Case 3}
   \par\quad\textbf{Categories:} L3 $\wedge$ L8, D1 $\wedge$ D6 $\wedge$ D7
   \par\quad\textbf{Input:} \texttt{list = [1, 2, $\dots$, 200, 201], distance = $-2^{31}$}
+  \par\quad\textbf{Reason:}
+  \begin{enumerate}
+    \item To verify the statement stated in the reason of \hyperref[category:l8]{\textbf{Category L8}}
+    \item To test the edge case where the distance is the minimum possible value of \texttt{int}
+    data type
+  \end{enumerate}
 \end{enumerate}
 
 \subsection{\texttt{Collections.min(Collection<? extends T> coll)}}
@@ -360,16 +378,23 @@ the \texttt{Comparable} interface and must be mutually comparable.
   \item \textbf{Test Case 1}
   \par\quad\textbf{Categories:} C1
   \par\quad\textbf{Input:} $\texttt{coll} = \{\texttt{1}\}$
+  \par\quad\textbf{Reason:} For testing the edge case
 
   \item \textbf{Test Case 2}
   \par\quad\textbf{Categories:} C2 $\wedge$ C7
   \par\quad\textbf{Input:} $\texttt{coll} = \{\texttt{1, 2, 3, 4, 5, 6, 7, 8, 9}\}$
+
+  \par\quad\textbf{Reason:} A general test case to test the correctness of method under normal
+  circumstances
 
   \item \textbf{Test Case 3}
   \par\quad\textbf{Categories:} C2 $\wedge$ C3 $\wedge$ C4 $\wedge$ C5
 
   \par\quad\textbf{Input:} $\texttt{coll} = \{\texttt{6, $-2^{31}$, 2, 4, 7, $-2^{31}$, 5, 3, 2,
   9}\}$
+
+  \par\quad\textbf{Reason:} To test the edge where the collection contains the minimum possible
+  value of the element's class (in this case $-2^{31}$)
 \end{enumerate}
 
 %----------------------------------------------------------------------------------------
