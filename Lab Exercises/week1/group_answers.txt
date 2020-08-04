@@ -1,0 +1,66 @@
+In what sense are the systems similar?
+--------------------------------------
+
+The system are all highly safety-critical systems. The systems are designed to aid users in high
+risk situations. In Boeing's case, the MCAS software is supposed to aid pilots in maintaining the
+plane's Angle of Attack; each module of the Challenger is vital for the success of the mission; the
+software for Therac-25 is used to control the radiation levels of the system to a safety level.
+
+
+## Official Answer
+Complex - Huge range of components.
+
+Tightly coupled - Lots of cross-component interaction.
+
+Reuse of design elements from previous systems.
+
+Complacency.
+E.g. - “not possible for Therac-25 to overdose a patient”, or
+extremely low probabilities of failure for Challenger.
+Subject to financial constraints / time constraints
+
+
+In what sense is the nature of the failures similar?
+----------------------------------------------------
+
+In all three systems, errors have been reported prior to the incidents. The authorities were
+overconfidence in their system, software, and hardware.
+
+The failures of three systems are attributed to a design flaw.
+1. The Boeing 737 MAX 8 incident was caused by the malfunction of MCAS
+2. The NASA Challenger incident was caused by the O-rings on the field joint
+3. The Therac-25 incident was caused by poor software design and lack of hardware locks
+
+Each of the system was also heavily reliant on a single component.
+1. The MCAS software in Boeing 737 MAX 8 required the accurate readings from the AOA sensors
+2. The root cause of the NASA Challenger incident was due to the serious O-ring erosion
+3. The Therac-25 heavily relied on its software for all safety features.
+
+## Official Answer
+Disastrous - resulted in multiple deaths.
+
+Several previous warnings.
+
+Complex circumstances.
+
+Challenger - O-rings only problematic at specific low temperatures.
+Therac - combinations of inputs.
+Boeing - specific angles of attack, coupled with speed, human interface problems.
+
+
+Could the disasters have been avoided by better development practices?
+----------------------------------------------------------------------
+
+Yes. If an error had occurred in a safety-critical system before, the engineer should address the
+issue completely before deploying the system into practice. Furthermore, the authorities implement
+more safety features in the event of serious failures. In addition, more testing should be done on
+its hardware and software.
+
+## Offical Answer
+Better review and validation, double-checking assumptions.
+
+Rigorous, routine analysis of earlier incidents.
+
+Less time-pressure to deploy.
+
+In the software cases, human intervention could (theoretically) have reduced risk of disaster

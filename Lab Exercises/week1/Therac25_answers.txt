@@ -1,0 +1,41 @@
+What was the system?
+--------------------
+
+The system in question was Therac-25, a computer-controlled radiation therapy machine. It was used
+to accelerate electrons to create high-energy beams that can destroy tumors with minimal impact on
+the surrounding healthy tissue. Compared with the older version (Therac-20), Therac-25 is more
+compact, versatile, and easier to use.
+
+How did the system fail?
+------------------------
+
+Between June 1985 and January 1987, six people were given massive overdoses of radiation by the
+Therac-25. Two software faults were to blame. One, when the operator incorrectly selected X-ray mode
+before quickly changing to electron mode, which allowed the electron beam to be set for X-ray mode
+without the X-ray target being in place. A second fault allowed the electron beam to activate during
+field-light mode, during which no beam scanner was active or target was in place.
+
+Had there been any prior warnings?
+----------------------------------
+
+Related problems were found in the Therac-20 software, but they were not recognised until after the
+Therac-25 accidents because the Therac-20 includes hardware safety interlocks. Thus, no injuries
+resulted during the usage of Therac-20 software. This might be the reason why the issues were not
+fixed and persisted in the Therac-25 software.
+
+What parts of the system caused the failure?
+--------------------------------------------
+
+There were several parts that were responsible for the cause of the accidents. The Therac-25 system
+did not have any hardware interlocks to prevent the electron-beam from operating in its high-energy
+mode without the target in place. The hardware had no way for the software to verify that the
+sensors were working correctly. The engineer had reused software that had defacts from older models.
+The software had a flag variable that could cause arithmatic overflow to occur.
+
+How could the failure have been prevented?
+-------------------------------------------
+
+The old software should have been tested and revised before reusing it. The engineer should not be
+overconfidence with the software and have kept hardware interlocks in the system. The system should
+have a more intuitive interface and informative error codes. The engineer should have carried out
+investigation when the issue was first reported on older model.

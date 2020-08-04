@@ -1,0 +1,50 @@
+What was the system?
+--------------------
+
+The system in question was the Three-Mile Island nuclear power plant. It contained three buildings:
+An Auxiliary building for processing waste water, a Containment building containing the reactor and
+the steam generator, and a Turbine building, which contained the water pumps that pumped coolant
+into the reactor, with filters to remove impurities from the water.
+
+How did the system fail?
+------------------------
+
+The incident occurred on March 28, 1979. A valve had accidentally been left open. When workers tried
+to dislodge a piece of resin blocking one of the filters in the Turbine building by blowing
+compressed air into the filter (a normal occurrence), some water dripped through the open valve and
+found its way into an air line. This eventually caused the turbine pump to shut down. This caused a
+"scram" emergency shutdown in the reactor. The reactor continued to generate decay heat and steam
+however, which built up in the reactor building. To remove the steam, several fail-safe pumps
+activated, but because their valves had been shut down for maintenance, they failed to remove any
+heat (it later transpired that these valves should not have been shut - this contravened one of the
+usage regulations). The buildup of pressure caused a relief valve above the tank to open. This
+should have then closed, but a mechanical failure meant that the valve remained open, enabling
+radioactive coolant water and steam to escape. The buildup of heat led to a partial reactor
+melt-down. Throughout all of this, plant operators didn't know how to respond because they were
+confronted with 100 simultaneous alarms from different areas.
+
+Had there been any prior warnings?
+----------------------------------
+
+There had been a similar incident in a different power plant (the Davis-Besse plant) the year
+before. In the 18 months running up to the accident there had been numerous problems with particles
+becoming stuck in the valves. No steps had been taken to correct these issues.
+
+What parts of the system caused the failure?
+--------------------------------------------
+
+There were several parts that led to the melt-down. The valve that had been mistakenly left open (in
+turn caused by poor operating procedures, which should have prevented this). The maintenance
+shut-down of the fail-save pump valves, and the failure of the pressure-release valve to shut again.
+Finally, the poor user-notification of errors - the overload of alarms meant that the workers were
+not able to identify the specific problems in the system.
+
+How could the failure have been prevented?
+-------------------------------------------
+
+The system should have been engineered to be more robust, including a better warning system and a
+more intuitive interface for operators (especially to deal with numerous alarms). Its operators and
+maintainers should have been trained (there was a limited understanding amongst operators of how the
+system worked). Quality assurance procedures had only been applied to areas of the plant that were
+deemed "safety critical", but not to the system as a whole. Had a proper QA procedure been applied
+to the plant as a whole, it is likely that aspects of this disaster could have been prevented.
